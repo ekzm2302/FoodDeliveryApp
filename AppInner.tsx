@@ -43,7 +43,9 @@ function AppInner() {
 
   useEffect(() => {
     axios.interceptors.response.use(
-      response => response,
+      response => {
+        return response;
+      },
       async error => {
         const {
           config,
@@ -51,24 +53,25 @@ function AppInner() {
         } = error;
         if (status === 419) {
           if (error.response.data.code === 'expired') {
-            const OriginalRequest = config;
+            const originalRequest = config;
             const refreshToken = await EncryptedStorage.getItem('refreshToken');
             // token refresh 요청
             const {data} = await axios.post(
-              `${Config.API_URL}/refreshToken`,
+              `${Config.API_URL}/refreshToken`, // token refresh api
               {},
               {headers: {authorization: `Bearer ${refreshToken}`}},
             );
-            //새로운 토큰 저장
+            // 새로운 토큰 저장
             dispatch(userSlice.actions.setAccessToken(data.data.accessToken));
-            OriginalRequest.headers.authorization = `Bearer ${data.data.accessToken}`;
-            return axios(OriginalRequest);
+            originalRequest.headers.authorization = `Bearer ${data.data.accessToken}`;
+            // 419로 요청 실패했던 요청 새로운 토큰으로 재요청
+            return axios(originalRequest);
           }
         }
         return Promise.reject(error);
       },
     );
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const callback = (data: any) => {
@@ -118,15 +121,17 @@ function AppInner() {
         );
       } catch (error) {
         console.error(error);
-        if ((error as AxiosError).response?.data.code === 'expired') {
-          Alert.alert('알림', '다시 로그인 해주세요.');
+        if (axios.isAxiosError(error)) {
+          if (error.response?.data.code === 'expired') {
+            Alert.alert('알림', '다시 로그인 해주세요.');
+          }
         }
       } finally {
         // TODO: 스플래시 스크린 없애기
       }
     };
     getTokenAndRefresh();
-  }, [dispatch]);
+  }, []);
 
   return (
     <NavigationContainer>

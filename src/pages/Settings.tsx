@@ -57,7 +57,7 @@ function Settings() {
     <View>
       <View style={styles.money}>
         <Text style={styles.moneyText}>
-          {name}님의{' '}
+          {name}님의 수익금{' '}
           <Text style={{fontWeight: 'bold'}}>
             {money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           </Text>
