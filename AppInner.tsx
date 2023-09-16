@@ -18,6 +18,9 @@ import userSlice from './src/slices/user';
 import {Alert} from 'react-native';
 import orderSlice from './src/slices/order';
 import usePermissions from './src/hooks/usePermissions';
+import SplashScreen from 'react-native-splash-screen';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -96,11 +99,13 @@ function AppInner() {
     }
   }, [isLoggedIn, disconnect]);
 
+  // 앱 실행시 토큰 있으면 로그인하는 코드
   useEffect(() => {
     const getTokenAndRefresh = async () => {
       try {
         const token = await EncryptedStorage.getItem('refreshToken');
         if (!token) {
+          SplashScreen.hide();
           return;
         }
         const response = await axios.post(
@@ -128,10 +133,11 @@ function AppInner() {
         }
       } finally {
         // TODO: 스플래시 스크린 없애기
+        SplashScreen.hide();
       }
     };
     getTokenAndRefresh();
-  }, []);
+  }, [dispatch]);
 
   return (
     <NavigationContainer>
@@ -140,17 +146,26 @@ function AppInner() {
           <Tab.Screen
             name="Orders"
             component={Orders}
-            options={{title: '오더 목록'}}
+            options={{
+              title: '오더 목록',
+              tabBarIcon: () => <FontAwesome5Icon name="list" size={20} />,
+            }}
           />
           <Tab.Screen
-            name="Delivery"
+            name="지도"
             component={Delivery}
-            options={{headerShown: false}}
+            options={{
+              headerShown: false,
+              tabBarIcon: () => <FontAwesome5Icon name="map" size={20} />,
+            }}
           />
           <Tab.Screen
             name="Settings"
             component={Settings}
-            options={{title: '내 정보'}}
+            options={{
+              title: '내 정보',
+              tabBarIcon: () => <FontAwesomeIcon name="gear" size={20} />,
+            }}
           />
         </Tab.Navigator>
       ) : (
