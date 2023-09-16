@@ -152,10 +152,11 @@ function AppInner() {
             }}
           />
           <Tab.Screen
-            name="지도"
+            name="Delivery"
             component={Delivery}
             options={{
               headerShown: false,
+              title: '지도',
               tabBarIcon: () => <FontAwesome5Icon name="map" size={20} />,
             }}
           />
@@ -164,6 +165,7 @@ function AppInner() {
             component={Settings}
             options={{
               title: '내 정보',
+              unmountOnBlur: true,
               tabBarIcon: () => <FontAwesomeIcon name="gear" size={20} />,
             }}
           />

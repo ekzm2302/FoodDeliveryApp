@@ -8,7 +8,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {LoggedInParamList} from '../../AppInner';
 import TMap from '../modules/TMap';
 
-type IngScreenProps = NativeStackScreenProps<LoggedInParamList, 'Delivery'>;
+type IngScreenProps = NativeStackScreenProps<LoggedInParamList>;
 
 function Ing({navigation}: IngScreenProps) {
   console.dir(navigation);
